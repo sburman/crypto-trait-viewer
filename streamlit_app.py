@@ -20,8 +20,6 @@ file_choice = st.sidebar.selectbox(
     file_list.keys()
 )
 
-st.title(file_choice)
-
 file_to_load = file_list[file_choice]
 df = pd.read_csv(file_to_load)[["category", "trait", "count", "rarity_score"]]
 
@@ -33,9 +31,11 @@ cat_selected = st.sidebar.selectbox(
 )
 
 if cat_selected is None or cat_selected == "All":
+    st.title(file_choice)
     _ = df.sort_values(['rarity_score'], ascending=False)
     st.dataframe(data=_, height=800)
 else:
+    st.title(file_choice + " - " + cat_selected)
     _ = df[df["category"] == cat_selected].sort_values(['rarity_score'], ascending=False)
 
     bar = alt.Chart(_).mark_bar().encode(
