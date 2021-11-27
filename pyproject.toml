@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "crypto-trait-viewer"
+version = "0.1.0"
+description = ""
+authors = ["Steven Burman <steven.burman@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+streamlit = "^1.2.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

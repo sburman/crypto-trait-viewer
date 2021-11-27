@@ -1,3 +1,2 @@
 pandas
-google_api_python_client
-protobuf
+numpy
