@@ -12,15 +12,24 @@ def load_id_mappings() -> pd.DataFrame:
     df = df[df["transaction_token_id"] != 0]
     return df
 
-ID_MAPS = load_id_mappings()
+def load_ballerz_info() -> pd.DataFrame:
+    id_maps = load_id_mappings()
+    print("ID_MAPS", id_maps.shape)
+    path = "./ballerz/BallerzStreamlit_v7.csv"
+    df = pd.read_csv(path)
+    print("BALLERZ", df.shape)
+    df = df.merge(id_maps, left_on='baller_id', right_on='public_token_id')
+    print("MERGED", df.shape)
+    print(df.columns)
+    return df
 
-print("LOADED ID MAPS:", len(ID_MAPS))
-print(ID_MAPS.columns)    
+BALLERZ = load_ballerz_info()
+
+# print("LOADED BALLERZ:", len(BALLERZ))
 
 def get_page_data(page: int = 1) -> Any:
 
     offset = (page - 1) * 25
-    print("get_page_data", "offset", offset)
     headers = {
         'authority': 'flowscan.org',
         'sec-ch-ua': '" Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
@@ -85,14 +94,15 @@ def transaction_info(time: str, id: str) -> Any:
     buyer = evt_buyer["fields"][1]["value"]["value"]
 
     # map baller id from transaction token
-    baller_id_result = ID_MAPS[ID_MAPS["transaction_token_id"] == transaction_token_id]
-    if len(baller_id_result) != 1:
+    baller_result = BALLERZ[BALLERZ["transaction_token_id"] == transaction_token_id]
+    if len(baller_result) != 1:
         print("Could not map transaction id:", transaction_token_id)
         return None
-    baller_id = baller_id_result.iloc[0]["public_token_id"]
+    baller = baller_result.iloc[0]
 
     return {
-        "baller_id": baller_id,
+        "baller_id": baller["baller_id"],
+        "image": baller["Image"],
         "price": price,
         "time": arrow.get(float(time)).humanize(),
         "buyer": buyer,
@@ -118,19 +128,11 @@ def make_tx_clickable(x: str) -> str:
     link = f"https://flowscan.org/transaction/{x}"
     return f'<a target="_blank" href="{link}">...{x[-7:]}</a>'
 
-def append_info_from_ballerz_info(tx_info) -> Any:
-    url = f"https://ballerz.info/?ballerz-id={tx_info['baller_id']}"
-    return tx_info
-
-
 def get_raw_df_for_page(page: int = 1) -> pd.DataFrame:
     response = get_page_data(page)
     edges = response["data"]["contract"]["interactions"]["edges"]
-    transactions = [transaction_info(x["node"]["time"], x["node"]["id"]) for x in edges if matches_top_level_events(x)]  # noqa
+    transactions = [transaction_info(x["node"]["time"], x["node"]["id"]) for x in edges[:2] if matches_top_level_events(x)]  # noqa
     transactions = [tx for tx in transactions if tx is not None]
-
-    # append baller info
-    transactions = [append_info_from_ballerz_info(tx) for tx in transactions]
 
     return pd.DataFrame(transactions)    
 
