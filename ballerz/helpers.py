@@ -14,18 +14,13 @@ def load_id_mappings() -> pd.DataFrame:
 
 def load_ballerz_info() -> pd.DataFrame:
     id_maps = load_id_mappings()
-    print("ID_MAPS", id_maps.shape)
     path = "./ballerz/BallerzStreamlit_v7.csv"
     df = pd.read_csv(path)
-    print("BALLERZ", df.shape)
     df = df.merge(id_maps, left_on='baller_id', right_on='public_token_id')
-    print("MERGED", df.shape)
-    print(df.columns)
     return df
 
 BALLERZ = load_ballerz_info()
-
-# print("LOADED BALLERZ:", len(BALLERZ))
+print("LOADED BALLERZ:", BALLERZ.shape)
 
 def get_page_data(page: int = 1) -> Any:
 
@@ -113,7 +108,6 @@ def transaction_info(time: str, id: str) -> Any:
         "buyer": buyer,
         "seller": seller,
         "transaction_id": id,
-        "transaction_token_id": transaction_token_id,
     }
 
 def matches_top_level_events(x: Any) -> bool:
