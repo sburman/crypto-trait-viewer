@@ -98,7 +98,7 @@ def transaction_info(time: str, id: str) -> Any:
         "buyer": buyer,
         "seller": seller,
         "transaction": id,
-        "transaction_token_id": transaction_token_id,
+        # "transaction_token_id": transaction_token_id,
     }
 
 def matches_top_level_events(x: Any) -> bool:
@@ -116,16 +116,16 @@ def make_baller_id_clickable(x: str) -> str:
 
 def make_tx_clickable(x: str) -> str:
     link = f"https://flowscan.org/transaction/{x}"
-    return f'<a target="_blank" href="{link}">{x}</a>'
+    return f'<a target="_blank" href="{link}">...{x[-7:]}</a>'
 
 def get_sales_df_for_page(page: int = 1) -> pd.DataFrame:
 
     response = get_page_data(page)
     edges = response["data"]["contract"]["interactions"]["edges"]
-    transactions = [transaction_info(x["node"]["time"], x["node"]["id"]) for x in edges if matches_top_level_events(x)]  # noqa
+    transactions = [transaction_info(x["node"]["time"], x["node"]["id"]) for x in edges[:3] if matches_top_level_events(x)]  # noqa
     transactions = [tx for tx in transactions if tx is not None]
 
-    df = pd.DataFrame(transactions)
+    df = pd.DataFrame(transactions)    
     # link is the column with hyperlinks
     df['baller_id'] = df['baller_id'].apply(make_baller_id_clickable)
     df['price'] = df['price'].apply(lambda x: f"${x:.0f}")
