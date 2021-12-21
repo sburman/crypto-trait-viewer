@@ -20,7 +20,6 @@ import ballerz.helpers as helpers
 st.set_page_config(page_title="Ballerz", layout="wide")
 
 function_choice = "Recent Sales"
-
 #  st.sidebar.selectbox(
 #     "Choose supported function:",
 #     ["Recent Sales"]
@@ -28,7 +27,7 @@ function_choice = "Recent Sales"
 
 if function_choice == "Recent Sales":
     st.title("Ballerz Recent Salez")
-    df = helpers.get_sales_df()
+    df = helpers.get_sales_df_for_page(1)
     st.write(df, unsafe_allow_html=True)
 else:
     st.title("Nothing to do. Select a function.")
