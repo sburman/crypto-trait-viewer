@@ -104,6 +104,11 @@ def transaction_info(time: str, id: str) -> Any:
         "baller_id": baller["baller_id"],
         "image": baller["Image"],
         "price": price,
+        "combo": baller["Combo Rank"],
+        "rarity": baller["Trait Rank"],
+        "skill": baller["Skill Rank"],
+        "team": baller["Team"],
+        "role": baller["Role"],
         "time": arrow.get(float(time)).humanize(),
         "buyer": buyer,
         "seller": seller,
@@ -128,24 +133,28 @@ def make_tx_clickable(x: str) -> str:
     link = f"https://flowscan.org/transaction/{x}"
     return f'<a target="_blank" href="{link}">...{x[-7:]}</a>'
 
+def path_to_image_html(path):
+    return '<img src="'+ path + '" style=max-height:64px;"/>'
+
 def get_raw_df_for_page(page: int = 1) -> pd.DataFrame:
     response = get_page_data(page)
     edges = response["data"]["contract"]["interactions"]["edges"]
-    transactions = [transaction_info(x["node"]["time"], x["node"]["id"]) for x in edges[:2] if matches_top_level_events(x)]  # noqa
+    transactions = [transaction_info(x["node"]["time"], x["node"]["id"]) for x in edges if matches_top_level_events(x)]  # noqa
     transactions = [tx for tx in transactions if tx is not None]
 
-    return pd.DataFrame(transactions)    
+    return pd.DataFrame(transactions)
 
 def get_display_df_for_page(page: int = 1) -> pd.DataFrame:
 
     df = get_raw_df_for_page(page)
     
-    # make it prettier fir ux
+    # make it prettier for ux
     df['baller_id'] = df['baller_id'].apply(make_baller_id_clickable)
     df['price'] = df['price'].apply(lambda x: f"${x:.0f}")
     df['transaction_id'] = df['transaction_id'].apply(make_tx_clickable)
     df['buyer'] = df['buyer'].apply(make_wallet_clickable)
     df['seller'] = df['seller'].apply(make_wallet_clickable)
+    df['image'] = df['image'].apply(path_to_image_html)
     df = df.to_html(escape=False)
     return df
 
