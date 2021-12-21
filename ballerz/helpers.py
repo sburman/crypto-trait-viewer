@@ -122,7 +122,7 @@ def get_sales_df_for_page(page: int = 1) -> pd.DataFrame:
 
     response = get_page_data(page)
     edges = response["data"]["contract"]["interactions"]["edges"]
-    transactions = [transaction_info(x["node"]["time"], x["node"]["id"]) for x in edges[:3] if matches_top_level_events(x)]  # noqa
+    transactions = [transaction_info(x["node"]["time"], x["node"]["id"]) for x in edges if matches_top_level_events(x)]  # noqa
     transactions = [tx for tx in transactions if tx is not None]
 
     df = pd.DataFrame(transactions)    
