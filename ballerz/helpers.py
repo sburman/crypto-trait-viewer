@@ -97,8 +97,8 @@ def transaction_info(time: str, id: str) -> Any:
         "time": arrow.get(float(time)).humanize(),
         "buyer": buyer,
         "seller": seller,
-        "transaction": id,
-        # "transaction_token_id": transaction_token_id,
+        "transaction_id": id,
+        "transaction_token_id": transaction_token_id,
     }
 
 def matches_top_level_events(x: Any) -> bool:
@@ -112,24 +112,36 @@ def make_wallet_clickable(x: str) -> str:
 
 def make_baller_id_clickable(x: str) -> str:
     link = f"https://ballerz.info/?ballerz-id={x}"
-    return f'<a target="_blank" href="{link}">{x}</a>'
+    return f'<a target="_blank" href="{link}">#{x}</a>'
 
 def make_tx_clickable(x: str) -> str:
     link = f"https://flowscan.org/transaction/{x}"
     return f'<a target="_blank" href="{link}">...{x[-7:]}</a>'
 
-def get_sales_df_for_page(page: int = 1) -> pd.DataFrame:
+def append_info_from_ballerz_info(tx_info) -> Any:
+    url = f"https://ballerz.info/?ballerz-id={tx_info['baller_id']}"
+    return tx_info
 
+
+def get_raw_df_for_page(page: int = 1) -> pd.DataFrame:
     response = get_page_data(page)
     edges = response["data"]["contract"]["interactions"]["edges"]
     transactions = [transaction_info(x["node"]["time"], x["node"]["id"]) for x in edges if matches_top_level_events(x)]  # noqa
     transactions = [tx for tx in transactions if tx is not None]
 
-    df = pd.DataFrame(transactions)    
-    # link is the column with hyperlinks
+    # append baller info
+    transactions = [append_info_from_ballerz_info(tx) for tx in transactions]
+
+    return pd.DataFrame(transactions)    
+
+def get_display_df_for_page(page: int = 1) -> pd.DataFrame:
+
+    df = get_raw_df_for_page(page)
+    
+    # make it prettier fir ux
     df['baller_id'] = df['baller_id'].apply(make_baller_id_clickable)
     df['price'] = df['price'].apply(lambda x: f"${x:.0f}")
-    df['transaction'] = df['transaction'].apply(make_tx_clickable)
+    df['transaction_id'] = df['transaction_id'].apply(make_tx_clickable)
     df['buyer'] = df['buyer'].apply(make_wallet_clickable)
     df['seller'] = df['seller'].apply(make_wallet_clickable)
     df = df.to_html(escape=False)

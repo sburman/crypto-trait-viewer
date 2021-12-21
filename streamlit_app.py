@@ -30,7 +30,7 @@ if function_choice == "Recent Sales":
 
     page_choice = st.sidebar.selectbox('Page?', [1, 2, 3, 4, 5])
 
-    df = helpers.get_sales_df_for_page(page_choice)
+    df = helpers.get_display_df_for_page(page_choice)
     st.write(df, unsafe_allow_html=True)
 else:
     st.title("Nothing to do. Select a function.")
