@@ -28,7 +28,7 @@ function_choice = "Recent Sales"
 if function_choice == "Recent Sales":
     st.title("Ballerz Recent Salez")
 
-    page_choice = st.sidebar.selectbox('Page?', [1, 2, 3, 4, 5])
+    page_choice = st.sidebar.selectbox('Page?', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 
     df = helpers.get_display_df_for_page(page_choice)
     st.write(df, unsafe_allow_html=True)
