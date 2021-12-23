@@ -7,7 +7,10 @@ from os.path import isfile, join
 
 import altair as alt
 
-import ballerz.helpers as helpers
+import ballerz.sales as sales
+import ballerz.listings as listings
+
+from streamlit_autorefresh import st_autorefresh
 
 # root_dir = './data'
 # onlyfiles = [f for f in listdir(root_dir) if isfile(join(root_dir, f))]
@@ -19,19 +22,16 @@ import ballerz.helpers as helpers
 
 st.set_page_config(page_title="Ballerz", layout="wide")
 
-function_choice = "Recent Sales"
-#  st.sidebar.selectbox(
-#     "Choose supported function:",
-#     ["Recent Sales"]
-# )
+function_choice = st.sidebar.selectbox(
+    "Choose supported function:",
+    ["Recent Listings", "Recent Sales"]
+)
 
-if function_choice == "Recent Sales":
-    st.title("Ballerz Recent Salez")
-
-    page_choice = st.sidebar.selectbox('Page?', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-
-    df = helpers.get_display_df_for_page(page_choice)
-    st.write(df, unsafe_allow_html=True)
+if function_choice == "Recent Listings":
+    listings.display()
+    st_autorefresh(interval=30*1000, key="listingscounter")
+elif function_choice == "Recent Sales":
+    sales.display()
 else:
     st.title("Nothing to do. Select a function.")
 

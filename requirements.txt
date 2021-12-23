@@ -3,3 +3,4 @@ numpy
 altair
 arrow
 beautifulsoup4
+st_autorefresh
