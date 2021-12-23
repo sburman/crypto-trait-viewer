@@ -9,6 +9,7 @@ import altair as alt
 
 import ballerz.sales as sales
 import ballerz.listings as listings
+from ballerz.helpers import BALLERZ
 
 from streamlit_autorefresh import st_autorefresh
 
@@ -24,7 +25,7 @@ st.set_page_config(page_title="Ballerz", layout="wide")
 
 function_choice = st.sidebar.selectbox(
     "Choose supported function:",
-    ["Recent Listings", "Recent Sales"]
+    ["Recent Listings", "Recent Sales", "Twitter Template"]
 )
 
 if function_choice == "Recent Listings":
@@ -32,6 +33,25 @@ if function_choice == "Recent Listings":
     st_autorefresh(interval=30*1000, key="listingscounter")
 elif function_choice == "Recent Sales":
     sales.display()
+elif function_choice == "Twitter Template":
+    baller_id = st.text_input("Id", value="")
+    baller_price = st.text_input("Price", value="")
+    #do something with id
+    baller = BALLERZ[BALLERZ["baller_id"] == int(baller_id)].iloc[0]
+    st.markdown(f""":fire::fire::fire: #BallerzNation sale alert
+
+Baller #{baller["baller_id"]} sells for ${baller_price}
+
+* Combo rank: {baller['Combo Rank']}
+* Trait rank: {baller['Trait Rank']}
+* Skill rank: {baller['Skill Rank']}
+
+More about this baller: https://ballerz.info/?ballerz-id={baller['baller_id']}
+
+Own your very own baller at the @BALLERZ_NFT marketplace: https://ongaia.com/browse""")
+
+    st.image(baller["Image"])
+
 else:
     st.title("Nothing to do. Select a function.")
 

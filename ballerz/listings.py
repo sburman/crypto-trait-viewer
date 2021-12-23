@@ -64,7 +64,6 @@ def listing_info(time: str, id: str) -> Any:
     # map baller id from transaction token
     baller_result = BALLERZ[BALLERZ["transaction_token_id"] == transaction_token_id]
     if len(baller_result) != 1:
-        print("Could not map transaction id:", transaction_token_id)
         return None
     baller = baller_result.iloc[0]
 

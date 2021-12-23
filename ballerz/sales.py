@@ -65,7 +65,6 @@ def transaction_info(time: str, id: str) -> Any:
     # map baller id from transaction token
     baller_result = BALLERZ[BALLERZ["transaction_token_id"] == transaction_token_id]
     if len(baller_result) != 1:
-        print("Could not map transaction id:", transaction_token_id)
         return None
     baller = baller_result.iloc[0]
 
@@ -78,7 +77,9 @@ def transaction_info(time: str, id: str) -> Any:
         "skill": baller["Skill Rank"],
         "team": baller["Team"],
         "role": baller["Role"],
-        "time": arrow.get(float(time)).humanize(),
+        "timestamp": int(time),
+        "datetime": datetime.datetime.fromtimestamp(int(time)),
+        "time": arrow.get(int(time)).humanize(),
         "buyer": buyer,
         "seller": seller,
         "transaction_id": id,
@@ -118,6 +119,3 @@ def display() -> Any:
 
     df = get_display_df_for_page(page_choice)
     st.write(df, unsafe_allow_html=True)
-
-
-    
