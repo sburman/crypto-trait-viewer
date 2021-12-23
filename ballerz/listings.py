@@ -105,6 +105,7 @@ def get_display_df_for_page(page: int = 1) -> pd.DataFrame:
     
     # make it prettier for ux
     df['baller_id'] = df['baller_id'].apply(direct_listing_link)
+    df['info'] = df['baller_id'].apply(make_baller_id_clickable)
     df['price'] = df['price'].apply(lambda x: f"${x:.0f}")
     df['transaction_id'] = df['transaction_id'].apply(make_tx_clickable)
     df['seller'] = df['seller'].apply(make_wallet_clickable)
