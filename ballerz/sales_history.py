@@ -51,7 +51,7 @@ def display() -> Any:
         ["Role", "Body", "Team", "Gender"]
     )
 
-    c = alt.Chart(df).mark_point().encode(
+    c = alt.Chart(df).mark_circle().encode(
         x=alt.X('time_axis',
             scale=alt.Scale(zero=False),
             axis=alt.Axis(title="Time", format='%b %d %H:%M')
