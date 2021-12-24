@@ -6,15 +6,14 @@ from datetime import datetime, timedelta
 import pandas as pd
 
 from .sales import *
+from .helpers import HISTORY_FILE
 
 def load_current_state() -> pd.DataFrame:
     return pd.DataFrame()
 
-FILENAME = './ballerz/ballerz_sales_history.csv'
-
 def update_sales() -> pd.DataFrame:
 
-    df = pd.read_csv(FILENAME, parse_dates=['datetime'])
+    df = pd.read_csv(HISTORY_FILE, parse_dates=['datetime'])
     print(df.shape)
 
     d = datetime.datetime.now() - timedelta(days=4)
@@ -44,7 +43,7 @@ def update_sales() -> pd.DataFrame:
     
     # add to old data df
     result = pd.concat([new_data, df])
-    result.to_csv(FILENAME, index=False)
+    result.to_csv(HISTORY_FILE, index=False)
     print("Completed update: ", new_data.shape[0], "from", result['datetime'].min(), "to", result['datetime'].max())
 
     return result

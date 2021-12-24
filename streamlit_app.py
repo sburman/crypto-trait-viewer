@@ -9,6 +9,7 @@ import altair as alt
 
 import ballerz.sales as sales
 import ballerz.listings as listings
+import ballerz.sales_history as sales_history
 from ballerz.helpers import BALLERZ
 
 from streamlit_autorefresh import st_autorefresh
@@ -25,7 +26,7 @@ st.set_page_config(page_title="Ballerz", layout="wide")
 
 function_choice = st.sidebar.selectbox(
     "Choose supported function:",
-    ["Recent Listings", "Recent Sales", "Twitter Template"]
+    ["Sales History", "Recent Sales", "Recent Listings", "Twitter Template"]
 )
 
 if function_choice == "Recent Listings":
@@ -33,6 +34,8 @@ if function_choice == "Recent Listings":
     st_autorefresh(interval=30*1000, key="listingscounter")
 elif function_choice == "Recent Sales":
     sales.display()
+elif function_choice == "Sales History":
+    sales_history.display()
 elif function_choice == "Twitter Template":
     baller_id = st.text_input("Id", value="")
     baller_price = st.text_input("Price", value="")
