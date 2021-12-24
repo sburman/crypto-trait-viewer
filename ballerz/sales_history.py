@@ -45,7 +45,7 @@ def display() -> Any:
 
     df = df[df['time_axis'] > show_from.datetime]
 
-    colour = st.sidebar.selectbox(
+    selected_category = st.sidebar.selectbox(
         "Color highlighter:",
         ["Role", "Body", "Team", "Gender"]
     )
@@ -60,11 +60,13 @@ def display() -> Any:
             scale=alt.Scale(domain=(5, max_price), clamp=True),
             axis=alt.Axis(title="Price ($USD)")),
         size=alt.Size('combo_size', legend=None),
-        color=colour,
+        color=alt.Color(selected_category, legend=None),
         href='link',
         tooltip=['baller_id', 'price', 'ago', 'combo', 'rarity', 'skill']
     ).properties(
         height=1000
-    ).interactive()
+    )
 
-    st.altair_chart(c, use_container_width=True)
+    line = c.transform_loess('time_axis', 'price').mark_line(size=8, stroke='#ed0c0c')
+
+    st.altair_chart(c + line, use_container_width=True)
