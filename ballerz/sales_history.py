@@ -44,7 +44,6 @@ def display() -> Any:
     show_from = most_recent.shift(days=(0 - days_history))
 
     df = df[df['time_axis'] > show_from.datetime]
-    df = df[df['price'] <= max_price]
 
     colour = st.sidebar.selectbox(
         "Color highlighter:",
@@ -56,7 +55,10 @@ def display() -> Any:
             scale=alt.Scale(zero=False),
             axis=alt.Axis(title="Time", format='%b %d %H:%M')
         ),
-        y=alt.X('price', axis=alt.Axis(title="Price ($USD)")),
+        y=alt.X(
+            'price',
+            scale=alt.Scale(domain=(5, max_price), clamp=True),
+            axis=alt.Axis(title="Price ($USD)")),
         size=alt.Size('combo_size', legend=None),
         color=colour,
         href='link',
