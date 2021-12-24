@@ -40,7 +40,7 @@ def display() -> Any:
     col3.metric(f"Previous 24hr sales", hours_48_sales - hours_24_sales)
     
     days_history = st.sidebar.select_slider("Show number of days", options=[1, 2, 3, 4, 5, 6, 7], value=1)
-    max_price = st.sidebar.slider("Filter max price", 0, int(df["price"].max()), 10000)
+    max_price = st.sidebar.slider("Filter max price", 0, int(df["price"].max()), 5000)
     show_from = most_recent.shift(days=(0 - days_history))
 
     df = df[df['time_axis'] > show_from.datetime]
