@@ -12,12 +12,13 @@ from typing import Any
 from .helpers import *
 
 def human_format(num):
+    places = 0
     magnitude = 0
     while abs(num) >= 1000:
         magnitude += 1
         num /= 1000.0
     # add more suffixes if you need them
-    return '$%.0f%s' % (num, ['', 'K', 'M', 'G', 'T', 'P'][magnitude])
+    return '$%.1f%s' % (num, ['', 'K', 'M', 'G', 'T', 'P'][magnitude])
 
 def display() -> Any:
     st.title("Ballerz Salez History")
