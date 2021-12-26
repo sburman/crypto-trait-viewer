@@ -78,7 +78,7 @@ def transaction_info(time: str, id: str) -> Any:
         "team": baller["Team"],
         "role": baller["Role"],
         "timestamp": int(time),
-        "datetime": datetime.datetime.fromtimestamp(int(time)),
+        "datetime": arrow.get(int(time)).datetime,
         "time": arrow.get(int(time)).humanize(),
         "buyer": buyer,
         "seller": seller,
@@ -96,7 +96,9 @@ def get_raw_df_for_page(page: int = 1) -> pd.DataFrame:
     transactions = [transaction_info(x["node"]["time"], x["node"]["id"]) for x in edges if matches_top_level_events(x)]  # noqa
     transactions = [tx for tx in transactions if tx is not None]
 
-    return pd.DataFrame(transactions)
+    r = pd.DataFrame(transactions)
+    r.set_index('datetime', inplace=True)
+    return r
 
 def get_display_df_for_page(page: int = 1) -> pd.DataFrame:
 

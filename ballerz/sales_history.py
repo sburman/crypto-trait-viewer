@@ -14,43 +14,59 @@ from .helpers import *
 def display() -> Any:
     st.title("Ballerz Salez History")
 
-    df = pd.read_csv(HISTORY_FILE, parse_dates=['datetime'])
-    df = pd.merge(df, BALLERZ, on="baller_id", how="left")
+    df = pd.read_csv(HISTORY_FILE, index_col='datetime')
+    df.index = df.index.astype('datetime64[ns]')
+    df = df.join(BALLERZ, on="baller_id", how="left", rsuffix="b_")
 
     selected_view = st.sidebar.selectbox("Select view", ["Timeline", "Trait Analysis"])
 
     # some display touch ups to the df
-    df['time_axis'] = df['timestamp'].apply(lambda x: arrow.get(x).datetime)
     df['combo_size'] = 10_000 - df['combo']
     df['link'] = df['baller_id'].apply(lambda x: f"https://ballerz.info/?ballerz-id={x}")
     df['ago'] = df['timestamp'].apply(lambda x: arrow.get(int(x)).humanize())
 
-    most_recent = arrow.get(int(df['timestamp'].max()))
+    most_recent = df.index.max()
     
-    hours_24 = show_from = most_recent.shift(days=-1)
-    hours_24_sales = df[df['time_axis'] > hours_24.datetime].shape[0]
+    hours_24 = most_recent - datetime.timedelta(days=1)
+    hours_24_sales = df[df.index > hours_24]
     
-    hours_48 = show_from = most_recent.shift(days=-2)
-    hours_48_sales = df[df['time_axis'] > hours_48.datetime].shape[0]
+    hours_48 = most_recent - datetime.timedelta(days=2)
+    hours_48_sales = df[df.index > hours_48]
 
+    currency_format = "${:0.0f}"
 
     col1, col2, col3 = st.columns(3)
-    col1.metric(f"Total Sales (updated {most_recent.humanize()})", df.shape[0])
-    col2.metric(f"Last 24hr sales", hours_24_sales)
-    col3.metric(f"Previous 24hr sales", hours_48_sales - hours_24_sales)
+    col1.metric(f"Overall Sales (updated {arrow.get(most_recent).humanize()})", df.shape[0])
+    col2.metric(f" Average", currency_format.format(df['price'].mean()))
+    col3.metric(f"Biggest", currency_format.format(df['price'].max()))
+    
+    col1, col2, col3 = st.columns(3)
+    col1.metric(f"24hr total", hours_24_sales.shape[0])
+    col2.metric(f"24hr Average", currency_format.format(hours_24_sales['price'].mean()))
+    col3.metric(f"24hr Biggest", currency_format.format(hours_24_sales['price'].max()))
+
+    col1, col2, col3 = st.columns(3)
+    col1.metric(f"48hr total", hours_48_sales.shape[0])
+    col2.metric(f"48hr Average", currency_format.format(hours_48_sales['price'].mean()))
+    col3.metric(f"48hr Biggest", currency_format.format(hours_48_sales['price'].max()))
+
+    # col2.metric(f"Last 24hr sales", hours_24_sales)
+    # col3.metric(f"Previous 24hr sales", hours_48_sales - hours_24_sales)
     
     days_history = st.sidebar.select_slider("Show number of days", options=[1, 2, 3, 4, 5, 6, 7], value=3)
-    show_from = most_recent.shift(days=(0 - days_history))
-    df = df[df['time_axis'] > show_from.datetime]
+    show_from = most_recent - datetime.timedelta(days=days_history)
+    df = df[df.index > show_from]
 
     max_price = st.sidebar.slider("Filter max price", 0, int(df["price"].max()), 5000)
 
+    df['time_axis'] = df.index
+
     if selected_view == "Timeline":
 
-        selected_category = st.sidebar.selectbox(
-            "Color highlighter:",
-            ["Role", "Body", "Team", "Gender"]
-        )
+        # selected_category = st.sidebar.selectbox(
+        #     "Color highlighter:",
+        #     ["Role", "Body", "Team", "Gender"]
+        # )
 
         c = alt.Chart(df).mark_circle().encode(
             x=alt.X('time_axis',
@@ -62,16 +78,16 @@ def display() -> Any:
                 scale=alt.Scale(domain=(5, max_price), clamp=True),
                 axis=alt.Axis(title="Price ($USD)")),
             size=alt.Size('combo_size', legend=None),
-            color=alt.Color(selected_category),
+            # color=alt.Color(selected_category, legend=None),
             href='link',
             tooltip=['baller_id', 'price', 'ago', 'combo', 'rarity', 'skill']
         ).properties(
             height=1000
         )
 
-        line = c.transform_loess('time_axis', 'price').mark_line(size=10, stroke='#ed0c0c')
+        # line = c.transform_loess('time_axis', 'price').mark_line()
 
-        st.altair_chart(c + line, use_container_width=True)
+        st.altair_chart(c, use_container_width=True)
 
     elif selected_view == "Trait Analysis":
 
