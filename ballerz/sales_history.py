@@ -11,6 +11,14 @@ from typing import Any
 
 from .helpers import *
 
+def human_format(num):
+    magnitude = 0
+    while abs(num) >= 1000:
+        magnitude += 1
+        num /= 1000.0
+    # add more suffixes if you need them
+    return '$%.0f%s' % (num, ['', 'K', 'M', 'G', 'T', 'P'][magnitude])
+
 def display() -> Any:
     st.title("Ballerz Salez History")
 
@@ -36,19 +44,19 @@ def display() -> Any:
     currency_format = "${:0.0f}"
 
     col1, col2, col3 = st.columns(3)
-    col1.metric(f"Overall Sales (updated {arrow.get(most_recent).humanize()})", df.shape[0])
-    col2.metric(f" Average", currency_format.format(df['price'].mean()))
-    col3.metric(f"Biggest", currency_format.format(df['price'].max()))
+    col1.metric(f"Overall Sale Count (updated {arrow.get(most_recent).humanize()})", df.shape[0])
+    col2.metric(f"Average Sale", currency_format.format(df['price'].mean()))
+    col3.metric(f"Total Sales", human_format(df['price'].sum()))
     
     col1, col2, col3 = st.columns(3)
-    col1.metric(f"24hr total", hours_24_sales.shape[0])
-    col2.metric(f"24hr Average", currency_format.format(hours_24_sales['price'].mean()))
-    col3.metric(f"24hr Biggest", currency_format.format(hours_24_sales['price'].max()))
+    col1.metric(f"24hr Sale Count", hours_24_sales.shape[0])
+    col2.metric(f"24hr Average Sale", currency_format.format(hours_24_sales['price'].mean()))
+    col3.metric(f"24hr Total Sales", human_format(hours_24_sales['price'].sum()))
 
     col1, col2, col3 = st.columns(3)
-    col1.metric(f"48hr total", hours_48_sales.shape[0])
-    col2.metric(f"48hr Average", currency_format.format(hours_48_sales['price'].mean()))
-    col3.metric(f"48hr Biggest", currency_format.format(hours_48_sales['price'].max()))
+    col1.metric(f"48hr Sale Count", hours_48_sales.shape[0])
+    col2.metric(f"48hr Average Sale", currency_format.format(hours_48_sales['price'].mean()))
+    col3.metric(f"48hr Total Sales", human_format(hours_48_sales['price'].sum()))
 
     # col2.metric(f"Last 24hr sales", hours_24_sales)
     # col3.metric(f"Previous 24hr sales", hours_48_sales - hours_24_sales)
@@ -111,8 +119,6 @@ def display() -> Any:
                     labelAngle=-90,
                     title=None,
                     labelAnchor="middle",
-                    # titleOrient='top',
-                    # labelOrient='top',
                     labelAlign='left',
                     labelPadding=3,
                 ),

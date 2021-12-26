@@ -30,6 +30,7 @@ def update_sales() -> pd.DataFrame:
         page = get_raw_df_for_page(i)
         print(f"Page {i} from", page.index.min(), "to", page.index.max())
         page_newer_filtered = page[page.index > latest_updated]
+        print(page_newer_filtered.index)
         page_updates.append(page_newer_filtered)
 
         # if we dropped any entries we know we have overlapped the time
@@ -39,10 +40,11 @@ def update_sales() -> pd.DataFrame:
             break
     
 
-    new_data = pd.concat(page_updates, axis=0, ignore_index=True) if page_updates else pd.DataFrame()
+    new_data = pd.concat(page_updates, axis=0) if page_updates else pd.DataFrame()
     print("")
     print("************************************")
     print("Adding txs: ", new_data.shape[0])
+    print("Index type:", new_data.index.dtype)
     print("************************************")
     for i, n in new_data.iterrows():
         print("Sold:", n["baller_id"], f"${n['price']}", "*****" if n["price"] >= 4000 else "")
