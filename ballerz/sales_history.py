@@ -8,6 +8,7 @@ import json
 import numpy as np
 import pandas as pd
 import requests
+import string
 
 from typing import Any
 
@@ -29,7 +30,7 @@ def display() -> Any:
     df.index = df.index.astype('datetime64[ns]')
     df = df.join(BALLERZ, on="baller_id", how="left", rsuffix="b_")
 
-    selected_view = st.sidebar.selectbox("Select view", ["Timeline", "Time Analysis", "Trait Analysis"], index=1)
+    selected_view = st.sidebar.selectbox("Select view", ["Timeline", "Time Analysis", "Trait Analysis"], index=0)
 
     # some display touch ups to the df
     df['combo_size'] = 10_000 - df['combo']
@@ -74,11 +75,6 @@ def display() -> Any:
 
     if selected_view == "Timeline":
 
-        # selected_category = st.sidebar.selectbox(
-        #     "Color highlighter:",
-        #     ["Role", "Body", "Team", "Gender"]
-        # )
-
         c = alt.Chart(df).mark_circle().encode(
             x=alt.X('time_axis',
                 scale=alt.Scale(zero=False),
@@ -86,18 +82,16 @@ def display() -> Any:
             ),
             y=alt.Y(
                 'price',
-                'price',
                 scale=alt.Scale(domain=(0, max_price), clamp=True),
                 axis=alt.Axis(title="Price ($USD)")),
             size=alt.Size('combo_size', legend=None),
-            # color=alt.Color(selected_category, legend=None),
             href='link',
             tooltip=['baller_id', 'price', 'ago', 'combo', 'rarity', 'skill']
         ).properties(
             height=1000
         )
 
-        # line = c.transform_loess('time_axis', 'price').mark_line()
+        c = c + c.transform_loess('time_axis', 'price').mark_line()
 
         st.altair_chart(c, use_container_width=True)
 
@@ -113,7 +107,9 @@ def display() -> Any:
         if analysis_ind > 2:
             bins = np.array(range(60, 101, 5))
         
-        df['binned'] = pd.cut(df[analysis_selection], bins=bins, labels=[f"{x}" for x in bins[:-1]])
+        alph = list(string.ascii_lowercase)
+
+        df['binned'] = pd.cut(df[analysis_selection], bins=bins, labels=[f"{alph[i]}_{x}" for i, x in enumerate(bins[:-1])])
         # st.write(df['binned'].value_counts())
 
         chart = altcat.catplot(df,
