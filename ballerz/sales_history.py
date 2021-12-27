@@ -40,7 +40,7 @@ def display() -> Any:
     hours_24_sales = df[df.index > hours_24]
     
     hours_48 = most_recent - datetime.timedelta(days=2)
-    hours_48_sales = df[df.index > hours_48]
+    hours_48_sales = df[(df.index < hours_24) & (df.index > hours_48)]
 
     currency_format = "${:0.0f}"
 
@@ -51,16 +51,14 @@ def display() -> Any:
     
     col1, col2, col3 = st.columns(3)
     col1.metric(f"24hr Sale Count", hours_24_sales.shape[0])
-    col2.metric(f"24hr Average Sale", currency_format.format(hours_24_sales['price'].mean()))
+    col2.metric(f"24hr Median Sale", currency_format.format(hours_24_sales['price'].median()))
     col3.metric(f"24hr Total Sales", human_format(hours_24_sales['price'].sum()))
 
     col1, col2, col3 = st.columns(3)
-    col1.metric(f"48hr Sale Count", hours_48_sales.shape[0])
-    col2.metric(f"48hr Average Sale", currency_format.format(hours_48_sales['price'].mean()))
-    col3.metric(f"48hr Total Sales", human_format(hours_48_sales['price'].sum()))
+    col1.metric(f"Previous 24hr Sale Count", hours_48_sales.shape[0])
+    col2.metric(f"Previous 24hr Median Sale", currency_format.format(hours_48_sales['price'].median()))
+    col3.metric(f"Previous 24hr Total Sales", human_format(hours_48_sales['price'].sum()))
 
-    # col2.metric(f"Last 24hr sales", hours_24_sales)
-    # col3.metric(f"Previous 24hr sales", hours_48_sales - hours_24_sales)
     
     days_history = st.sidebar.select_slider("Show number of days", options=[1, 2, 3, 4, 5, 6, 7], value=3)
     show_from = most_recent - datetime.timedelta(days=days_history)
