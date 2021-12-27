@@ -4,3 +4,4 @@ altair
 arrow
 beautifulsoup4
 streamlit-autorefresh
+altair_catplot

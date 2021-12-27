@@ -11,6 +11,7 @@ altair = "^4.1.0"
 arrow = "^1.2.1"
 beautifulsoup4 = "^4.10.0"
 streamlit-autorefresh = "^0.0.1"
+altair-catplot = "^0.0.5"
 
 [tool.poetry.dev-dependencies]
 
