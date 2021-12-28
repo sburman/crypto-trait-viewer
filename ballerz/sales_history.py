@@ -30,7 +30,7 @@ def display() -> Any:
     df.index = df.index.astype('datetime64[ns]')
     df = df.join(BALLERZ, on="baller_id", how="left", rsuffix="b_")
 
-    selected_view = st.sidebar.selectbox("Select view", ["Timeline", "Time Analysis", "Trait Analysis"], index=0)
+    selected_view = st.sidebar.selectbox("Select view", ["Timeline", "Bucket Analysis", "Trait Analysis"], index=0)
 
     # some display touch ups to the df
     df['combo_size'] = 10_000 - df['combo']
@@ -95,7 +95,7 @@ def display() -> Any:
 
         st.altair_chart(c, use_container_width=True)
 
-    elif selected_view == "Time Analysis":
+    elif selected_view == "Bucket Analysis":
         
         analysis_selections = ["combo", "rarity", "skill", "Dunks", "Shooting", "Playmaking", "Defense"]
         
