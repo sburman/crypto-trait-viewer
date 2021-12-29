@@ -65,11 +65,12 @@ def display() -> Any:
         col3.metric(f"Previous 24hr Total Sales", human_format(hours_48_sales['price'].sum()))
 
     
-    days_history = st.sidebar.select_slider("Show number of days", options=[1, 2, 3, 4, 5, 6, 7], value=3)
-    show_from = most_recent - datetime.timedelta(days=days_history)
-    df = df[df.index > show_from]
+    days_history = st.sidebar.select_slider("Show number of days", options=["All", 1, 2, 3, 4, 5, 6, 7], value="All")
+    if days_history != "All":
+        show_from = most_recent - datetime.timedelta(days=days_history)
+        df = df[df.index > show_from]
 
-    max_price = st.sidebar.slider("Filter max price", 0, int(df["price"].max()), 5000)
+    max_price = st.sidebar.slider("Filter max price", 0, int(df["price"].max()), 10000)
 
     df['time_axis'] = df.index
 
@@ -119,10 +120,10 @@ def display() -> Any:
             st.altair_chart(c, use_container_width=True)
 
         elif analysis_type == "Total Number Of Sales":
-            base = alt.Chart(t).mark_bar(color='#0940e6').encode(x=alt.X('t:T'), y=alt.Y('price_count:Q')).properties(height=800)
+            base = alt.Chart(t).mark_bar(color='#0940e6').encode(x=alt.X('t:T'), y=alt.Y('price_count:Q'), tooltip=['t', 'price_count:Q', 'price_sum:Q']).properties(height=800)
             st.altair_chart(base, use_container_width=True)
         elif analysis_type == "Total Cost Of Sales":
-            base = alt.Chart(t).mark_bar(color='#0940e6').encode(x=alt.X('t:T'), y=alt.Y('price_sum:Q')).properties(height=800)
+            base = alt.Chart(t).mark_bar(color='#0940e6').encode(x=alt.X('t:T'), y=alt.Y('price_sum:Q'), tooltip=['t', 'price_count:Q', 'price_sum:Q']).properties(height=800)
             st.altair_chart(base, use_container_width=True)
 
     elif selected_view == "Bucket Analysis":
