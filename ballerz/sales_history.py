@@ -30,7 +30,7 @@ def display() -> Any:
     df.index = df.index.astype('datetime64[ns]')
     df = df.join(BALLERZ, on="baller_id", how="left", rsuffix="b_")
 
-    selected_view = st.sidebar.selectbox("Select view", ["Timeline", "Bucket Analysis", "Trait Analysis"], index=0)
+    selected_view = st.sidebar.selectbox("Select view", ["Timeline", "Sliding Window Analysis", "Bucket Analysis", "Trait Analysis"], index=0)
 
     # some display touch ups to the df
     df['combo_size'] = 10_000 - df['combo']
@@ -94,6 +94,36 @@ def display() -> Any:
         c = c + c.transform_loess('time_axis', 'price').mark_line()
 
         st.altair_chart(c, use_container_width=True)
+
+    elif selected_view == "Sliding Window Analysis":
+
+        def percentile(n):
+            def percentile_(x):
+                return x.quantile(n)
+            percentile_.__name__ = 'percentile_{:2.0f}'.format(n*100)
+            return percentile_
+
+        analysis_type = st.sidebar.selectbox("Analyse", ["Price Bands", "Total Number Of Sales", "Total Cost Of Sales"], index=0)
+        window = st.sidebar.selectbox("Time window", ["1H", "4H", "12H", "1D"], index=0)
+
+        t = df.copy()[["price"]]
+        t = t.resample(window).agg(['sum', 'count', 'mean', percentile(0), percentile(0.1), percentile(0.25), percentile(0.5), percentile(0.75), percentile(0.9), percentile(1)]).round(2)
+        t.columns = ['_'.join(col).strip() for col in t.columns.values]
+        t['t'] = t.index
+
+        if analysis_type == "Price Bands":
+
+            base = alt.Chart(t).mark_line(color='#0940e6').encode(x=alt.X('t:T'), y=alt.Y('price_percentile_50:Q')).properties(height=800)
+            band = base.mark_area(opacity=0.3, color='#0940e6').encode(alt.Y('price_percentile_25:Q'), alt.Y2('price_percentile_75:Q'))
+            c = base + band
+            st.altair_chart(c, use_container_width=True)
+
+        elif analysis_type == "Total Number Of Sales":
+            base = alt.Chart(t).mark_bar(color='#0940e6').encode(x=alt.X('t:T'), y=alt.Y('price_count:Q')).properties(height=800)
+            st.altair_chart(base, use_container_width=True)
+        elif analysis_type == "Total Cost Of Sales":
+            base = alt.Chart(t).mark_bar(color='#0940e6').encode(x=alt.X('t:T'), y=alt.Y('price_sum:Q')).properties(height=800)
+            st.altair_chart(base, use_container_width=True)
 
     elif selected_view == "Bucket Analysis":
         
