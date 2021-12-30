@@ -76,7 +76,9 @@ def listing_info(time: str, id: str) -> Any:
         "skill": baller["Skill Rank"],
         "team": baller["Team"],
         "role": baller["Role"],
-        "time": arrow.get(float(time)).humanize(),
+        "timestamp": int(time),
+        "datetime": arrow.get(int(time)).datetime,
+        "time": arrow.get(int(time)).humanize(),
         "seller": seller,
         "transaction_id": id,
     }
@@ -92,7 +94,9 @@ def get_raw_df_for_page(page: int = 1) -> pd.DataFrame:
     transactions = [listing_info(x["node"]["time"], x["node"]["id"]) for x in edges if matches_top_level_events(x)]  # noqa
     transactions = [tx for tx in transactions if tx is not None]
 
-    return pd.DataFrame(transactions)
+    r = pd.DataFrame(transactions)
+    r.set_index('datetime', inplace=True)
+    return r
 
 def direct_listing_link(x: str) -> str:
     link = f"https://ongaia.com/ballerz/{x}"

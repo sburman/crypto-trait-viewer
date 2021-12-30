@@ -1,6 +1,7 @@
 import pandas as pd
 
 HISTORY_FILE = './ballerz/ballerz_sales_history.csv'
+HISTORY_LISTINGS_FILE = './ballerz/ballerz_listing_history.csv'
 
 def load_id_mappings() -> pd.DataFrame:
     path = "./ballerz/ballerz_id_mapping.csv"
