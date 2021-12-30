@@ -26,15 +26,16 @@ st.set_page_config(page_title="Ballerz", layout="wide")
 
 function_choice = st.sidebar.selectbox(
     "Choose supported function:",
-    ["Sales History", "Recent Sales", "Recent Listings", "Twitter Template"]
+    ["Sales Analysis", "Live Sales", "Live Listings", "Twitter Template"]
 )
 
-if function_choice == "Recent Listings":
+if function_choice == "Live Listings":
     listings.display()
     st_autorefresh(interval=30*1000, key="listingscounter")
-elif function_choice == "Recent Sales":
+elif function_choice == "Live Sales":
     sales.display()
-elif function_choice == "Sales History":
+    st_autorefresh(interval=30*1000, key="salescounter")
+elif function_choice == "Sales Analysis":
     sales_history.display()
 elif function_choice == "Twitter Template":
     baller_id = st.text_input("Id", value="")

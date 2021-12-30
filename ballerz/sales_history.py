@@ -108,9 +108,11 @@ def display() -> Any:
         window = st.sidebar.selectbox("Time window", ["1H", "4H", "12H", "1D"], index=0)
 
         t = df.copy()[["price"]]
-        t = t.resample(window).agg(['sum', 'count', 'mean', percentile(0), percentile(0.1), percentile(0.25), percentile(0.5), percentile(0.75), percentile(0.9), percentile(1)]).round(2)
+        t = t.resample(window, origin="end").agg(['sum', 'count', 'mean', percentile(0), percentile(0.1), percentile(0.25), percentile(0.5), percentile(0.75), percentile(0.9), percentile(1)]).round(2)
         t.columns = ['_'.join(col).strip() for col in t.columns.values]
         t['t'] = t.index
+
+        # st.dataframe(t.tail(8))
 
         if analysis_type == "Price Bands":
 
