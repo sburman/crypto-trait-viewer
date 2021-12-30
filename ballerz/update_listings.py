@@ -10,35 +10,39 @@ from .helpers import HISTORY_LISTINGS_FILE
 
 def update_listings() -> pd.DataFrame:
 
-    # df = pd.read_csv(HISTORY_LISTINGS_FILE, index_col='datetime')
+    df = pd.read_csv(HISTORY_LISTINGS_FILE, index_col='datetime')
     
     # # # restores datetime index from timestamp
     # df = pd.read_csv(HISTORY_LISTINGS_FILE)
     # df["datetime"] = df['timestamp'].apply(lambda x: arrow.get(int(x)).datetime)
     # df.set_index('datetime', inplace=True)
 
-    # latest_updated = df.index.max()
-    # print("Existing from", df.index.min(), "to", latest_updated)
+    latest_updated = df.index.max()
+    print("Existing from", df.index.min(), "to", latest_updated)
     
     # SCRATCH: start from scratch 
-    df = pd.DataFrame()
-    latest_updated = datetime.datetime.utcfromtimestamp(0)
+    # df = pd.DataFrame()
+    # latest_updated = datetime.datetime.utcfromtimestamp(0)
 
-    max_pages = 2
+    max_pages = 100
     page_updates = []
     for i in range(1, max_pages + 1):
         
         page = get_raw_df_for_page(i)
+        if page is None:
+            print(f"Page {i} is empty")
+            continue
+
         print(f"Page {i} from", page.index.min(), "to", page.index.max())
         
         # SCRATCH: no filtering required from scratch 
-        page_newer_filtered = page
-        # page[page.index > latest_updated]
+        # page_newer_filtered = page
+        page_newer_filtered = page[page.index > latest_updated]
 
         page_updates.append(page_newer_filtered)
 
         # SCRATCH: temp output in case we fall over
-        pd.concat(page_updates, axis=0).to_csv(f"./ballerz/dump/ballerz_listing_history_{i}.csv", index=False)
+        # pd.concat(page_updates, axis=0).to_csv(f"./ballerz/dump/ballerz_listing_history_{i}.csv", index=False)
 
         # if we dropped any entries we know we have overlapped the time
         if page.shape[0] != page_newer_filtered.shape[0]:

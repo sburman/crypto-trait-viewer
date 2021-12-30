@@ -94,9 +94,12 @@ def get_raw_df_for_page(page: int = 1) -> pd.DataFrame:
     transactions = [listing_info(x["node"]["time"], x["node"]["id"]) for x in edges if matches_top_level_events(x)]  # noqa
     transactions = [tx for tx in transactions if tx is not None]
 
-    r = pd.DataFrame(transactions)
-    r.set_index('datetime', inplace=True)
-    return r
+    if len(transactions) > 0:
+        r = pd.DataFrame(transactions)
+        r.set_index('datetime', inplace=True)
+        return r
+    else:
+        return None
 
 def direct_listing_link(x: str) -> str:
     link = f"https://ongaia.com/ballerz/{x}"
