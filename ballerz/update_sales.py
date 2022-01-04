@@ -43,7 +43,7 @@ def update_sales() -> pd.DataFrame:
     print("Index type:", new_data.index.dtype)
     print("************************************")
     for i, n in new_data.iterrows():
-        print("Sold:", n["baller_id"], f"${n['price']}", "*****" if n["price"] >= 3900 else "")
+        print("Sold:", n["baller_id"], f"${n['price']}", "*****" if n["price"] >= 3400 else "")
     print("************************************")
     print("")
     
