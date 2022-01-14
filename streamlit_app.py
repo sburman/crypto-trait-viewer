@@ -52,7 +52,7 @@ Baller #{baller["baller_id"]} sells for ${baller_price}
 
 More about this baller: https://ballerz.info/?ballerz-id={baller['baller_id']}
 
-Own your very own baller at the @BALLERZ_NFT marketplace: https://ongaia.com/browse""")
+Own your very own baller at the @BALLERZ_NFT marketplace: https://ongaia.com/ballerz""")
 
     st.image(baller["Image"])
 
