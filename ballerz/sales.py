@@ -21,7 +21,11 @@ def get_page_data(page: int = 1) -> Any:
 
     response = requests.post('https://flowscan.org/query', headers=headers, data=data)
 
-    return json.loads(response.text)
+    if response.status_code == 200:
+        return json.loads(response.text)
+    else:
+        print(response.text)
+        raise Exception("Flowscan retrieval issue")
 
 def get_detail(id: str) -> Any:
     headers = {
