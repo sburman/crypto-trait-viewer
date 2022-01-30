@@ -166,7 +166,7 @@ def display() -> Any:
         heatmap = alt.Chart(df, height=650, width=750).mark_rect().encode(
             alt.X('rarity:Q', bin=alt.Bin(maxbins=10)),
             alt.Y('skill:Q', bin=alt.Bin(maxbins=10)),
-            alt.Color('median(price):Q', scale=alt.Scale(scheme='greenblue'))
+            alt.Color('mean(price):Q', scale=alt.Scale(scheme='greenblue'))
         )
 
         st.altair_chart(heatmap, use_container_width=False)
