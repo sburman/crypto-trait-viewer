@@ -30,7 +30,7 @@ def display() -> Any:
     df.index = df.index.astype('datetime64[ns]')
     df = df.join(BALLERZ, on="baller_id", how="left", rsuffix="b_")
 
-    selected_view = st.sidebar.selectbox("Select view", ["Timeline", "Sliding Window Analysis", "Bucket Analysis", "Trait Analysis"], index=0)
+    selected_view = st.sidebar.selectbox("Select view", ["Timeline", "Sliding Window Analysis", "Bucket Analysis", "Trait Analysis", "Skills vs Rarity"], index=0)
 
     # some display touch ups to the df
     df['combo_size'] = 10_000 - df['combo']
@@ -157,8 +157,19 @@ def display() -> Any:
                             ),
                transform='box')
 
-        st.altair_chart(chart, use_container_width=True)
+        st.altair_chart(chart, use_container_width=False)
 
+
+    elif selected_view == "Skills vs Rarity":
+        st.write(":basketball: Skill vs :man: Rarity")
+
+        heatmap = alt.Chart(df, height=650, width=750).mark_rect().encode(
+            alt.X('rarity:Q', bin=alt.Bin(maxbins=10)),
+            alt.Y('skill:Q', bin=alt.Bin(maxbins=10)),
+            alt.Color('median(price):Q', scale=alt.Scale(scheme='greenblue'))
+        )
+
+        st.altair_chart(heatmap, use_container_width=False)
 
     elif selected_view == "Trait Analysis":
 
