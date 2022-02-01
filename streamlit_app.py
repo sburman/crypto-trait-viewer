@@ -40,24 +40,25 @@ elif function_choice == "Sales Analysis":
 elif function_choice == "Twitter Template":
     baller_id = st.text_input("Id", value="")
     baller_price = st.text_input("Price", value="")
-    #do something with id
-    if not baller_id:
-        st.caption("Enter a baller")
-    else:
-        baller = BALLERZ[BALLERZ["baller_id"] == int(float(baller_id))].iloc[0]
+
+    if baller_id:
+        #do something with id
+        baller = BALLERZ[BALLERZ["baller_id"] == int(baller_id)].iloc[0]
         st.markdown(f""":fire::fire::fire: #BallerzNation sale alert
 
-    Baller #{baller["baller_id"]} sells for ${baller_price}
+Baller #{baller["baller_id"]} sells for ${baller_price}
 
-    * Combo rank: {baller['Combo Rank']}
-    * Trait rank: {baller['Trait Rank']}
-    * Skill rank: {baller['Skill Rank']}
+* Combo rank: {baller['Combo Rank']}
+* Trait rank: {baller['Trait Rank']}
+* Skill rank: {baller['Skill Rank']}
 
-    More about this baller: https://ballerz.info/?ballerz-id={baller['baller_id']}
+More about this baller: https://ballerz.info/?ballerz-id={baller['baller_id']}
 
-    Own your very own baller at the @BALLERZ_NFT marketplace: https://ongaia.com/ballerz""")
+Own your very own baller at the @BALLERZ_NFT marketplace: https://ongaia.com/ballerz""")
 
         st.image(baller["Image"])
+    else:
+        st.caption("Enter a baller id.")
 
 else:
     st.title("Nothing to do. Select a function.")
