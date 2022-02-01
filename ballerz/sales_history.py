@@ -52,15 +52,15 @@ def display() -> Any:
     col2.metric(f"Average Sale", currency_format.format(df['price'].mean()))
     col3.metric(f"Total Sales", human_format(df['price'].sum()))
     
-    col1, col2, col3 = st.columns(3)
-    col1.metric(f"24hr Sale Count", hours_24_sales.shape[0])
-    col2.metric(f"24hr Median Sale", currency_format.format(hours_24_sales['price'].median()))
-    col3.metric(f"24hr Total Sales", human_format(hours_24_sales['price'].sum()))
+    # col1, col2, col3 = st.columns(3)
+    # col1.metric(f"24hr Sale Count", hours_24_sales.shape[0])
+    # col2.metric(f"24hr Median Sale", currency_format.format(hours_24_sales['price'].median()))
+    # col3.metric(f"24hr Total Sales", human_format(hours_24_sales['price'].sum()))
 
-    col1, col2, col3 = st.columns(3)
-    col1.metric(f"Previous 24hr Sale Count", hours_48_sales.shape[0])
-    col2.metric(f"Previous 24hr Median Sale", currency_format.format(hours_48_sales['price'].median()))
-    col3.metric(f"Previous 24hr Total Sales", human_format(hours_48_sales['price'].sum()))
+    # col1, col2, col3 = st.columns(3)
+    # col1.metric(f"Previous 24hr Sale Count", hours_48_sales.shape[0])
+    # col2.metric(f"Previous 24hr Median Sale", currency_format.format(hours_48_sales['price'].median()))
+    # col3.metric(f"Previous 24hr Total Sales", human_format(hours_48_sales['price'].sum()))
 
     days_history = st.sidebar.select_slider("Show number of days", options=["All", 7, 6, 5, 4, 3, 2, 1], value="All")
     if days_history != "All":
