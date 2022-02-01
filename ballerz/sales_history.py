@@ -49,36 +49,17 @@ def display() -> Any:
 
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.caption("1")
-        st.caption("a")
         st.metric(f"Overall Sale Count (updated {arrow.get(most_recent).humanize()})", df.shape[0])
         st.metric(f"24hr Sale Count", hours_24_sales.shape[0])
         st.metric(f"Previous 24hr Sale Count", hours_48_sales.shape[0])
     with col2:
-        st.caption("2")
         st.metric(f"Average Sale", currency_format.format(df['price'].mean()))
         st.metric(f"24hr Median Sale", currency_format.format(hours_24_sales['price'].median()))
         st.metric(f"Previous 24hr Median Sale", currency_format.format(hours_48_sales['price'].median()))
     with col3:
-        st.caption("3")
         st.metric(f"Total Sales", human_format(df['price'].sum()))
         st.metric(f"24hr Total Sales", human_format(hours_24_sales['price'].sum()))
         st.metric(f"Previous 24hr Total Sales", human_format(hours_48_sales['price'].sum()))
-
-    # col1, col2, col3 = st.columns(3)
-    # col1.metric(f"Overall Sale Count (updated {arrow.get(most_recent).humanize()})", df.shape[0])
-    # col2.metric(f"Average Sale", currency_format.format(df['price'].mean()))
-    # col3.metric(f"Total Sales", human_format(df['price'].sum()))
-    
-    # col1, col2, col3 = st.columns(3)
-    # col1.metric(f"24hr Sale Count", hours_24_sales.shape[0])
-    # col2.metric(f"24hr Median Sale", currency_format.format(hours_24_sales['price'].median()))
-    # col3.metric(f"24hr Total Sales", human_format(hours_24_sales['price'].sum()))
-
-    # col1, col2, col3 = st.columns(3)
-    # col1.metric(f"Previous 24hr Sale Count", hours_48_sales.shape[0])
-    # col2.metric(f"Previous 24hr Median Sale", currency_format.format(hours_48_sales['price'].median()))
-    # col3.metric(f"Previous 24hr Total Sales", human_format(hours_48_sales['price'].sum()))
 
     days_history = st.sidebar.select_slider("Show number of days", options=["All", 7, 6, 5, 4, 3, 2, 1], value="All")
     if days_history != "All":
