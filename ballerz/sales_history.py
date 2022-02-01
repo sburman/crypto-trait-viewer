@@ -48,9 +48,15 @@ def display() -> Any:
     currency_format = "${:0.0f}"
 
     col1, col2, col3 = st.columns(3)
-    col1.caption("1")
-    col2.caption("2")
-    col3.caption("3")
+    with col1:
+        st.caption("1")
+        st.caption("a")
+    with col2:
+        st.caption("2")
+        st.caption("b")
+    with col3:
+        st.caption("3")
+        st.caption("c")
 
     # col1, col2, col3 = st.columns(3)
     # col1.metric(f"Overall Sale Count (updated {arrow.get(most_recent).humanize()})", df.shape[0])
