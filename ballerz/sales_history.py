@@ -41,7 +41,7 @@ def display() -> Any:
     
     hours_24 = most_recent - datetime.timedelta(days=1)
     hours_24_sales = df[df.index > hours_24]
-    
+
     hours_48 = most_recent - datetime.timedelta(days=2)
     hours_48_sales = df[(df.index < hours_24) & (df.index > hours_48)]
 

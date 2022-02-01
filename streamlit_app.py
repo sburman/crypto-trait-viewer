@@ -41,7 +41,7 @@ elif function_choice == "Twitter Template":
     baller_id = st.text_input("Id", value="")
     baller_price = st.text_input("Price", value="")
     #do something with id
-    baller = BALLERZ[BALLERZ["baller_id"] == int(baller_id)].iloc[0]
+    baller = BALLERZ[BALLERZ["baller_id"] == int(float(baller_id))].iloc[0]
     st.markdown(f""":fire::fire::fire: #BallerzNation sale alert
 
 Baller #{baller["baller_id"]} sells for ${baller_price}
