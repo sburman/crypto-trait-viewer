@@ -101,7 +101,8 @@ def get_raw_df_for_page(page: int = 1) -> pd.DataFrame:
     transactions = [tx for tx in transactions if tx is not None]
 
     r = pd.DataFrame(transactions)
-    r.set_index('datetime', inplace=True)
+    if 'datetime' in r.columns:
+        r.set_index('datetime', inplace=True)
     return r
 
 def get_display_df_for_page(page: int = 1) -> pd.DataFrame:
