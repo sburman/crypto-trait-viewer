@@ -20,7 +20,7 @@ def update_sales() -> pd.DataFrame:
     latest_updated = df.index.max()
     print("Existing from", df.index.min(), "to", latest_updated)
     
-    max_pages = 50
+    max_pages = 200
     page_updates = []
     for i in range(1, max_pages + 1):
         
