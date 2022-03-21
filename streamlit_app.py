@@ -10,7 +10,7 @@ import altair as alt
 import ballerz.sales as sales
 import ballerz.listings as listings
 import ballerz.sales_history as sales_history
-from ballerz.helpers import BALLERZ
+from ballerz.helpers import BALLERZ, HISTORY_FILE
 
 from streamlit_autorefresh import st_autorefresh
 
@@ -23,6 +23,23 @@ from streamlit_autorefresh import st_autorefresh
 #     file_list[name] = f"{root_dir}/{f}"
 
 st.set_page_config(page_title="Ballerz", layout="wide")
+
+@st.cache
+def convert_df_for_download():
+     # IMPORTANT: Cache the conversion to prevent computation on every rerun
+    df = pd.read_csv(HISTORY_FILE, index_col='datetime')
+    df.index = df.index.astype('datetime64[ns]')
+    df = df.join(BALLERZ, on="baller_id", how="left", rsuffix="b_")
+    return df.to_csv().encode('utf-8')
+
+csv = convert_df_for_download()
+
+st.sidebar.download_button(
+     label="Download full sales history (CSV)",
+     data=csv,
+     file_name='ballerz_sales_history.csv',
+     mime='text/csv',
+ )
 
 function_choice = st.sidebar.selectbox(
     "Choose supported function:",
