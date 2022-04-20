@@ -61,7 +61,7 @@ def display() -> Any:
         st.metric(f"24hr Total Sales", human_format(hours_24_sales['price'].sum()))
         st.metric(f"Previous 24hr Total Sales", human_format(hours_48_sales['price'].sum()))
 
-    days_history = st.sidebar.select_slider("Show number of days", options=["All", 7, 6, 5, 4, 3, 2, 1], value="All")
+    days_history = st.sidebar.select_slider("Show number of days", options=["All", 90, 30, 60, 7, 2], value="All")
     if days_history != "All":
         show_from = most_recent - datetime.timedelta(days=days_history)
         df = df[df.index > show_from]
